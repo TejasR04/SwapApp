@@ -1,32 +1,45 @@
 package com.example.swapapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    String username, password;
+    String email, password;
 
-    private ArrayList<String> username_info = new ArrayList<>();
-    private ArrayList<String> password_info = new ArrayList<>();
-    private ArrayList<String> name_info = new ArrayList<>();
+    private static final String USERS = "users";
+    private static final String TAG = "MainActivity";
 
-    EditText username_input;
+    EditText email_input;
     EditText password_input;
 
     Button login;
     Button signup;
+
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,37 +47,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RelativeLayout loginXml = (RelativeLayout) findViewById(R.id.loginXml);
-        Snackbar signUpFirst = Snackbar.make(loginXml, "You must sign up first", Snackbar.LENGTH_SHORT);
         Snackbar tempWorking = Snackbar.make(loginXml, "Login works", Snackbar.LENGTH_SHORT);
         Snackbar passwordIncorrect = Snackbar.make(loginXml, "Password is incorrect", Snackbar.LENGTH_SHORT);
-        Snackbar usernameIncorrect = Snackbar.make(loginXml, "Username is incorrect", Snackbar.LENGTH_SHORT);
+        Snackbar emailIncorrect = Snackbar.make(loginXml, "Email is incorrect", Snackbar.LENGTH_SHORT);
 
-        username_input = (EditText) findViewById(R.id.username);
+        email_input = (EditText) findViewById(R.id.email);
         password_input = (EditText) findViewById(R.id.password);
+
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        mDatabase = database.getReference(USERS);
 
         login = findViewById(R.id.loginButton);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                username = username_input.getText().toString();
+                email = email_input.getText().toString();
                 password = password_input.getText().toString();
-                int index;
 
-                if (username_info.size() < 1) {
-                    signUpFirst.show();
-                }
-                else {
-                    if (username_info.contains(username)) {
-                        index = username_info.indexOf(username);
-                        if (password_info.get(index).equals(password)) {
-                            tempWorking.show();
-                            // open activity
-                        } else {
-                            passwordIncorrect.show();
-                        }
-                    } else {
-                        usernameIncorrect.show();
-                    }
+                if (email.length() > 0 && password.length() > 0) {
+                    loginUser(email, password);
                 }
             }
         });
@@ -78,23 +80,48 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    public void openSignUpActivity() {
-        Intent i = new Intent(this, SignUpActivity.class);
-        i.putExtra("username_info", username_info);
-        i.putExtra("password_info", password_info);
-        i.putExtra("name_info", name_info);
-        startActivityForResult(i, 101);
-    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 101) {
-            if (resultCode == Activity.RESULT_OK) {
-                Bundle e = data.getExtras();
-                username_info = e.getStringArrayList("username_info");
-                password_info = e.getStringArrayList("password_info");
-                name_info = e.getStringArrayList("name_info");
-            }
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            currentUser.reload();
         }
     }
+
+    public void loginUser(String email, String password) {
+        RelativeLayout loginXml = (RelativeLayout) findViewById(R.id.loginXml);
+        Snackbar tempWorking = Snackbar.make(loginXml, "Login works", Snackbar.LENGTH_SHORT);
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                            tempWorking.show();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed. Incorrect email/password",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+                    }
+                });
+    }
+
+    private void updateUI(FirebaseUser user) {
+        String keyId = mDatabase.push().getKey();
+        mDatabase.child(keyId).setValue(user);
+    }
+
+    public void openSignUpActivity() {
+        Intent i = new Intent(this, SignUpActivity.class);
+        startActivity(i);
+    }
+
 }
