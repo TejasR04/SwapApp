@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        mDatabase = database.getReference(USERS);
+        mDatabase = database.getReference("test");
 
         login = findViewById(R.id.loginButton);
         login.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            //updateUI(user);
+                            openInfoActivity();
                             tempWorking.show();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -116,9 +117,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         String keyId = mDatabase.push().getKey();
-        mDatabase.child(keyId).setValue(user);
+        mDatabase.setValue(user);
     }
 
+    public void openInfoActivity() {
+        Intent i = new Intent(this, InfoActivity.class);
+        startActivity(i);
+    }
     public void openSignUpActivity() {
         Intent i = new Intent(this, SignUpActivity.class);
         startActivity(i);
