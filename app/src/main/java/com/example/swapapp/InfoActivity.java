@@ -48,6 +48,7 @@ public class InfoActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 uploadImage();
             }
 
@@ -83,3 +84,5 @@ public class InfoActivity extends AppCompatActivity {
                 }
             });
 }
+
+

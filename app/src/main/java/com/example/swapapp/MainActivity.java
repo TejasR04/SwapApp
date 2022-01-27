@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             //updateUI(user);
-                            openInfoActivity();
+                            openNavigationActivity();
                             tempWorking.show();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -120,10 +120,11 @@ public class MainActivity extends AppCompatActivity {
         mDatabase.setValue(user);
     }
 
-    public void openInfoActivity() {
-        Intent i = new Intent(this, InfoActivity.class);
+    public void openNavigationActivity() {
+        Intent i = new Intent(this, NavigationActivity.class);
         startActivity(i);
     }
+
     public void openSignUpActivity() {
         Intent i = new Intent(this, SignUpActivity.class);
         startActivity(i);

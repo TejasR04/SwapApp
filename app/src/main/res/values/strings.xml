@@ -18,5 +18,9 @@
     <string name="prompt_name">Enter your name</string>
     <string name="create_account">Create Account</string>
     <string name="test">TextView</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_swap">Swap</string>
+    <string name="title_profile">Profile</string>
 
 </resources>
