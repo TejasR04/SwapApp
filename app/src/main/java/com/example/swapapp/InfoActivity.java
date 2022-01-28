@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class InfoActivity extends AppCompatActivity {
@@ -27,6 +29,9 @@ public class InfoActivity extends AppCompatActivity {
     ImageView imageView;
     FirebaseStorage storage;
     Uri imageUri;
+    EditText name;
+    EditText desc;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,8 @@ public class InfoActivity extends AppCompatActivity {
         button = findViewById(R.id.button);
         imageView = findViewById(R.id.imageView);
         storage = FirebaseStorage.getInstance();
+        name = findViewById(R.id.name);
+        desc = findViewById(R.id.desc);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,11 +55,14 @@ public class InfoActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 uploadImage();
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                System.out.println(storageRef.child("images/1ba70124-d42a-4877-958b-c33b206e2a66.jpeg"));
+                HashMap<String, Object> hs =
             }
 
         });
+
 }
 
     private void uploadImage() {
