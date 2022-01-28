@@ -10,6 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SwapApp">
         <activity
+            android:name=".SwapActivity"
+            android:exported="false"
+            android:label="@string/title_activity_swap"
+            android:theme="@style/Theme.SwapApp.NoActionBar" />
+        <activity
             android:name=".NavigationActivity"
             android:exported="false"
             android:label="@string/title_activity_navigation" />

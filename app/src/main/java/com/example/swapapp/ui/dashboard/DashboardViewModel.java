@@ -10,7 +10,7 @@ public class DashboardViewModel extends ViewModel {
 
     public DashboardViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("Click Below to Upload New Item");
+        mText.setValue("Click below to upload a new item");
     }
 
     public LiveData<String> getText() {

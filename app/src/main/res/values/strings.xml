@@ -22,5 +22,7 @@
     <string name="title_home">Home</string>
     <string name="title_swap">Swap</string>
     <string name="title_profile">Profile</string>
+    <string name="describe">Description</string>
+    <string name="title_activity_swap">SwapActivity</string>
 
 </resources>
